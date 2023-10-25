@@ -11,16 +11,17 @@ global COOKIE
 
 load_dotenv()
 COOKIE = os.environ["yuque_cookie"]
+CSRF_TOKEN = os.environ["csrf_token"]
+OUTPUT_DIRECTORY = os.environ["output_directory"]
+
 logger = log_utils.get_logger('yuque_service')
 
-COOKIE = "lang=zh-cn; _yuque_session=Wp4jcnzLxQz_Ipaz8d5WOIbDK6rjWrW3UaubRIV7wlDEe1r9GNYNaHBUNpuO4hgu4wA1PUsJCSCncmwTojdXsw==; yuque_ctoken=jKGqoi-6Ikel-ouyXdSkvc5d; acw_tc=0bca293616755015492492845ecd49ad61620af558b22f48b3c9d7f19c19b3"
 hostUrl = "https://www.yuque.com"
 
 headers = {"Accept": "application/json",
            "Content-Type": "application/json",
            "cookie": COOKIE,
-           # x-csrf-token取cookie中的yuque_ctoken的值
-           "x-csrf-token": "jKGqoi-6Ikel-ouyXdSkvc5d"
+           "x-csrf-token": CSRF_TOKEN
            }
 download_headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -33,8 +34,7 @@ download_headers = {
     "sec-fetch-mode": "navigate",
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
     "cookie": COOKIE,
-    # x-csrf-token取cookie中的yuque_ctoken的值
-    "x-csrf-token": "jKGqoi-6Ikel-ouyXdSkvc5d"
+    "x-csrf-token": CSRF_TOKEN
     }
 
 
@@ -172,7 +172,7 @@ def download_lib(lib: {}):
     # logger.info("%s",headers.get("Content-Type").find("application/json")>-1)
     logger.info("get_catalog_by_libId")
     catalog_node_list = get_catalog_node_list(lib["target_id"])
-    add_path_to_catalog_node_list(catalog_node_list, 'root', "./exported/"+lib["target"]["name"])
+    add_path_to_catalog_node_list(catalog_node_list, 'root', OUTPUT_DIRECTORY + lib["target"]["name"])
     catalog_node_dict = convert_list_to_dict(catalog_node_list, 'doc_id')
     logger.info("catalog_node_dict:%s", json.dumps(catalog_node_dict))
     lib_catalog = get_catalog_by_lib_id(str(lib["target_id"]))
